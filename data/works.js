@@ -52,7 +52,7 @@ window.WORKS = [
       "· 개인이 만든 서명되지 않은 앱이라 처음 열 때 보안 경고가 뜹니다. 앱을 마우스 오른쪽 버튼으로 누르고 \"열기\"를 선택하거나, 시스템 설정 > 개인정보 보호 및 보안에서 \"그래도 열기\"를 누르세요.\n" +
       "· 비공식 내부 API를 쓰기 때문에 Anthropic이 바꾸면 동작이 멈출 수 있습니다.",
     tags: ["macOS", "Swift", "메뉴바", "Claude"],
-    thumbnail: "",                            // 상세 보기 상단 큰 이미지 (예: "images/sample.png"). 비워두면 없음
+    thumbnail: "images/claude-usage-bar-shot.jpg",                            // 상세 보기 상단 큰 이미지 (예: "images/sample.png"). 비워두면 없음
     files: [
       { label: "ClaudeUsageBar 앱 (macOS, zip)", path: "files/claude-usage-bar.zip" },
     ],
@@ -83,7 +83,7 @@ window.WORKS = [
       "· Apple Silicon Mac, macOS 14 이상\n" +
       "· 서명되지 않은 앱이라 처음 열 때 보안 경고가 뜹니다. 앱을 마우스 오른쪽 버튼으로 누르고 \"열기\"를 선택하세요.",
     tags: ["macOS", "SwiftUI", "학습", "프롬프트", "Claude"],
-    thumbnail: "",
+    thumbnail: "images/ai-study-shot.jpg",
     files: [
       { label: "AI Study 앱 (macOS, zip)", path: "files/ai-study.zip" },
     ],
