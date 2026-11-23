@@ -16,7 +16,13 @@
     })[c]);
   }
 
-  const categoryName = (key) => CATEGORIES[key] || key || "기타";
+  // 카테고리는 "앱" 같은 문자열 또는 { name: "앱", icon: "📱" } 형태 둘 다 허용
+  const categoryInfo = (key) => {
+    const c = CATEGORIES[key];
+    if (!c) return { name: key || "기타", icon: "✨" };
+    return typeof c === "string" ? { name: c, icon: "✨" } : { name: c.name || key, icon: c.icon || "✨" };
+  };
+  const categoryName = (key) => categoryInfo(key).name;
   const fileExt = (path) => (String(path).split("?")[0].split(".").pop() || "").toLowerCase();
   const isPdf = (path) => fileExt(path) === "pdf";
 
@@ -26,13 +32,17 @@
     return d ? `${y}.${m}.${d}` : date;
   }
 
-  // 썸네일이 없을 때 쓰는 기본 표지
-  function coverHtml(work) {
-    if (work.thumbnail) {
-      return `<img src="${esc(work.thumbnail)}" alt="" loading="lazy">`;
-    }
-    const initial = esc((work.title || "?").replace(/^예시:\s*/, "").trim().charAt(0));
-    return `<div class="cover cover-${esc(work.category || "etc")}"><span>${initial}</span></div>`;
+  // 아이콘 타일: icon(이모지 또는 이미지 경로) → 썸네일 → 카테고리 아이콘 순서로 사용
+  function iconHtml(work) {
+    const cat = work.category || "etc";
+    const icon = work.icon || "";
+    const isImage = /[./]/.test(icon);
+    let inner;
+    if (icon && isImage) inner = `<img src="${esc(icon)}" alt="" loading="lazy">`;
+    else if (icon) inner = esc(icon);
+    else if (work.thumbnail) inner = `<img src="${esc(work.thumbnail)}" alt="" loading="lazy">`;
+    else inner = esc(categoryInfo(cat).icon);
+    return `<span class="icon icon-${esc(cat)}" aria-hidden="true">${inner}</span>`;
   }
 
   /* ---------- 상단 정보 ---------- */
@@ -42,6 +52,8 @@
       $("#site-title").textContent = SITE.title;
     }
     $("#site-intro").textContent = SITE.intro || "";
+    $("#site-hello").textContent = SITE.hello || "";
+    $("#site-hello").hidden = !SITE.hello;
     $("#site-links").innerHTML = (SITE.links || [])
       .map((l) => `<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)}</a>`)
       .join("");
@@ -53,8 +65,8 @@
     const used = [...new Set(WORKS.map((w) => w.category || "etc"))];
     const keys = Object.keys(CATEGORIES).filter((k) => used.includes(k))
       .concat(used.filter((k) => !(k in CATEGORIES)));
-    const buttons = [["all", "전체", WORKS.length]].concat(
-      keys.map((k) => [k, categoryName(k), WORKS.filter((w) => (w.category || "etc") === k).length])
+    const buttons = [["all", "🌼 전체", WORKS.length]].concat(
+      keys.map((k) => [k, `${categoryInfo(k).icon} ${categoryName(k)}`, WORKS.filter((w) => (w.category || "etc") === k).length])
     );
     $("#filters").innerHTML = buttons
       .map(([key, label, n]) =>
@@ -72,33 +84,49 @@
     return hay.includes(state.query);
   }
 
+  // 카테고리 순서 (CATEGORIES에 적은 순서, 그 외는 뒤에)
+  function categoryOrder(list) {
+    const used = [...new Set(list.map((w) => w.category || "etc"))];
+    return Object.keys(CATEGORIES).filter((k) => used.includes(k))
+      .concat(used.filter((k) => !(k in CATEGORIES)));
+  }
+
+  function itemHtml(w) {
+    const fileCount = (w.files || []).length;
+    const linkCount = (w.links || []).length;
+    return `
+      <button type="button" class="item" data-id="${esc(w.id)}">
+        ${iconHtml(w)}
+        <span class="item-text">
+          <span class="item-title">${esc(w.title)}</span>
+          <span class="item-summary">${esc(w.summary)}</span>
+          <span class="item-meta">
+            <span class="badge">${esc(categoryName(w.category))}</span>
+            <time>${esc(formatDate(w.date))}</time>
+            ${fileCount ? `<span title="첨부파일">📎 ${fileCount}</span>` : ""}
+            ${linkCount ? `<span title="링크">🔗 ${linkCount}</span>` : ""}
+          </span>
+        </span>
+      </button>`;
+  }
+
   function renderGrid() {
     const list = WORKS.filter(matches);
-    $("#grid").innerHTML = list
-      .map((w) => {
-        const fileCount = (w.files || []).length;
-        const linkCount = (w.links || []).length;
+    // "전체"이고 검색어가 없을 때는 카테고리별로 묶어서 보여준다
+    const grouped = state.category === "all" && !state.query;
+    if (grouped) {
+      $("#grid").innerHTML = categoryOrder(list).map((k) => {
+        const items = list.filter((w) => (w.category || "etc") === k);
+        const info = categoryInfo(k);
         return `
-        <button type="button" class="card" data-id="${esc(w.id)}">
-          <div class="thumb">${coverHtml(w)}</div>
-          <div class="card-body">
-            <div class="meta">
-              <span class="badge">${esc(categoryName(w.category))}</span>
-              <time>${esc(formatDate(w.date))}</time>
-            </div>
-            <h2>${esc(w.title)}</h2>
-            <p>${esc(w.summary)}</p>
-            <div class="card-foot">
-              <div class="tags">${(w.tags || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div>
-              <div class="attach">
-                ${fileCount ? `<span title="첨부파일">📎 ${fileCount}</span>` : ""}
-                ${linkCount ? `<span title="링크">🔗 ${linkCount}</span>` : ""}
-              </div>
-            </div>
-          </div>
-        </button>`;
-      })
-      .join("");
+          <section class="group">
+            <h2 class="group-title"><span aria-hidden="true">${esc(info.icon)}</span>${esc(info.name)}<span class="n">${items.length}</span></h2>
+            <div class="list">${items.map(itemHtml).join("")}</div>
+          </section>`;
+      }).join("");
+    } else {
+      $("#grid").innerHTML = list.length ? `<div class="list">${list.map(itemHtml).join("")}</div>` : "";
+    }
     $("#empty").hidden = list.length > 0;
     $("#count").textContent = `작업물 ${list.length}개`;
   }
@@ -127,12 +155,17 @@
       `<a class="btn" href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join("");
 
     $("#detail-body").innerHTML = `
-      ${w.thumbnail ? `<div class="detail-thumb"><img src="${esc(w.thumbnail)}" alt=""></div>` : ""}
-      <div class="meta">
-        <span class="badge">${esc(categoryName(w.category))}</span>
-        <time>${esc(formatDate(w.date))}</time>
+      ${w.thumbnail && w.icon ? `<div class="detail-thumb"><img src="${esc(w.thumbnail)}" alt=""></div>` : ""}
+      <div class="detail-head">
+        ${iconHtml(w)}
+        <div>
+          <div class="meta">
+            <span class="badge">${esc(categoryName(w.category))}</span>
+            <time>${esc(formatDate(w.date))}</time>
+          </div>
+          <h2 id="detail-title">${esc(w.title)}</h2>
+        </div>
       </div>
-      <h2 id="detail-title">${esc(w.title)}</h2>
       <div class="tags">${(w.tags || []).map((t) => `<span>#${esc(t)}</span>`).join("")}</div>
       <p class="desc">${esc(w.description || w.summary)}</p>
       ${links ? `<h3>링크</h3><div class="link-list">${links}</div>` : ""}
@@ -192,8 +225,8 @@
   });
 
   $("#grid").addEventListener("click", (e) => {
-    const card = e.target.closest(".card");
-    if (card) openDetail(card.dataset.id);
+    const item = e.target.closest(".item");
+    if (item) openDetail(item.dataset.id);
   });
 
   // 주소 뒤에 #작업물id 가 붙어 있으면 바로 상세 보기를 연다 (공유 링크용)
