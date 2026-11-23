@@ -30,7 +30,7 @@ Portfolio/
   id: "react-basics",                 // 고유 이름 (영어/숫자/하이픈)
   icon: "⚛️",                          // 왼쪽 아이콘 (이모지 또는 "images/파일.png")
   title: "React 기초 정리",
-  category: "study",                  // app | study | etc
+  category: "study",                  // app | web | study | etc
   date: "2026-11-23",                 // 최신 날짜가 맨 앞에 표시됨
   summary: "목록에 보이는 한 줄 소개",
   description: "상세 보기에 나오는 긴 설명.\n줄바꿈 가능",

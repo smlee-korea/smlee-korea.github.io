@@ -18,6 +18,7 @@ window.SITE = {
 // 카테고리 (key는 작업물의 category 값과 맞춘다, 적은 순서대로 화면에 묶여서 나온다)
 window.CATEGORIES = {
   app: { name: "앱", icon: "📱" },
+  web: { name: "홈페이지", icon: "🌐" },
   study: { name: "공부 자료", icon: "📚" },
   etc: { name: "기타", icon: "✨" },
 };
@@ -26,92 +27,90 @@ window.CATEGORIES = {
  * 작업물 목록
  * icon: 왼쪽 아이콘. 이모지("🎵") 또는 이미지 경로("images/my-app.png").
  *       비워두면 카테고리 아이콘이 나온다.
- * ※ 아래 "예시:" 항목들은 화면 확인용이다. 실제 작업물을 올리면 지운다.
  */
 window.WORKS = [
   {
-    id: "sample-study",                       // 영문/숫자/하이픈. 공유 링크 주소(#sample-study)에 쓰인다
-    icon: "📝",
-    title: "예시: 공부 정리 자료",
-    category: "study",
+    id: "claude-usage-bar",                   // 영문/숫자/하이픈. 공유 링크 주소(#claude-usage-bar)에 쓰인다
+    icon: "✳️",
+    title: "Claude 사용량 메뉴바",
+    category: "app",
     date: "2026-11-23",
-    summary: "PDF 첨부파일이 있는 공부 자료 예시입니다.",
+    summary: "macOS 메뉴바에 Claude 구독 사용량(5시간 · 주간)을 항상 띄워 주는 작은 앱입니다.",
     description:
-      "카드를 누르면 이렇게 상세 내용이 나옵니다.\n줄바꿈도 그대로 표시됩니다.\n\n실제 자료를 올리면 이 예시는 지워 주세요.",
-    tags: ["예시", "PDF"],
+      "Claude를 쓰다 보면 \"지금 얼마나 썼지?\"가 궁금할 때가 많아서, 설정 화면에 들어가지 않고도 메뉴바에서 바로 확인할 수 있게 만들었습니다.\n\n" +
+      "■ 주요 기능\n" +
+      "· 메뉴바 표시: ✳︎ 23% · 41% (5시간 세션 사용률 · 주간 사용률)\n" +
+      "· 70% 이상은 주황, 90% 이상은 빨강으로 바뀌어 한눈에 알 수 있음\n" +
+      "· 클릭하거나 ⌃⌥⌘U를 누르면 게이지, 리셋까지 남은 시간, 리셋 시각이 나오는 상세 메뉴\n" +
+      "· 5분마다 자동 갱신, 잠자기에서 깨어나면 바로 갱신\n" +
+      "· 로그인 시 자동 실행 켜기/끄기\n\n" +
+      "■ 동작 원리\n" +
+      "Claude Code가 키체인에 저장해 둔 로그인 정보로 claude.ai 사용량 화면과 같은 데이터를 불러옵니다. 로그인 정보는 어디에도 따로 저장하지 않습니다.\n\n" +
+      "■ 다운로드해서 쓰려면\n" +
+      "· Apple Silicon Mac, macOS 13 이상\n" +
+      "· Claude Code에 로그인되어 있어야 합니다 (터미널에서 claude 실행)\n" +
+      "· 개인이 만든 서명되지 않은 앱이라 처음 열 때 보안 경고가 뜹니다. 앱을 마우스 오른쪽 버튼으로 누르고 \"열기\"를 선택하거나, 시스템 설정 > 개인정보 보호 및 보안에서 \"그래도 열기\"를 누르세요.\n" +
+      "· 비공식 내부 API를 쓰기 때문에 Anthropic이 바꾸면 동작이 멈출 수 있습니다.",
+    tags: ["macOS", "Swift", "메뉴바", "Claude"],
     thumbnail: "",                            // 상세 보기 상단 큰 이미지 (예: "images/sample.png"). 비워두면 없음
     files: [
-      { label: "예시 PDF", path: "files/sample.pdf" },
+      { label: "ClaudeUsageBar 앱 (macOS, zip)", path: "files/claude-usage-bar.zip" },
     ],
     links: [],
   },
   {
-    id: "sample-wordbook",
-    icon: "🔤",
-    title: "예시: 영어 단어장",
-    category: "study",
-    date: "2026-11-15",
-    summary: "매일 외운 단어를 주제별로 정리한 자료입니다.",
-    description: "공부 자료 예시입니다.",
-    tags: ["예시", "영어"],
+    id: "ai-study",
+    icon: "images/ai-study-icon.png",
+    title: "AI Study",
+    category: "app",
+    date: "2026-11-22",
+    summary: "AI에게 의도를 잘 전달하는 프롬프트 연습과 복습을 매일 도와주는 macOS 학습 앱입니다.",
+    description:
+      "\"~해줘\"를 \"나는 ~를 원해, 왜냐하면 ~\"으로 바꾸는 연습을 매일 할 수 있게 만든 나만의 공부 앱입니다. 답을 쓰면 AI가 채점하고, 피드백을 보고 다시 써야 한 세트가 끝납니다.\n\n" +
+      "■ 주요 기능\n" +
+      "· 오늘의 과제: 매일 문제 2~3개와 복습 카드\n" +
+      "· 문제 풀기: 처음 쓰기 → AI 채점(5가지 기준, 10점 만점) → 다시 쓰기 → 재채점 → 모범 답안\n" +
+      "· 복습 카드: 잘 아는 카드는 점점 늦게 나오는 간격 반복\n" +
+      "· 자주 빠뜨리는 것, 공부 노트 검색, 내 실력 그래프, 단계(Lv.1~4)\n\n" +
+      "■ 저절로 일어나는 일\n" +
+      "· 매일 아침 Claude가 내 약점을 보고 새 문제, 카드, 노트를 추가\n" +
+      "· 한 세트를 마칠 때마다 오답노트 PDF를 새로 만듦\n" +
+      "· Mac 로그인, 잠금 해제 때 앱이 자동으로 열림\n\n" +
+      "■ 만든 방법\n" +
+      "SwiftUI로 만든 네이티브 macOS 앱이며 외부 라이브러리를 쓰지 않았습니다. AI 채점은 Claude Code(claude -p)를 사용합니다.\n\n" +
+      "■ 다운로드해서 쓰려면\n" +
+      "· 내 컴퓨터의 공부 폴더(Desktop/Claude/study)와 Claude Code를 함께 쓰도록 만든 개인용 앱이라, 다른 Mac에서는 화면만 보이고 내용이 비어 있을 수 있습니다.\n" +
+      "· Apple Silicon Mac, macOS 14 이상\n" +
+      "· 서명되지 않은 앱이라 처음 열 때 보안 경고가 뜹니다. 앱을 마우스 오른쪽 버튼으로 누르고 \"열기\"를 선택하세요.",
+    tags: ["macOS", "SwiftUI", "학습", "프롬프트", "Claude"],
     thumbnail: "",
-    files: [],
+    files: [
+      { label: "AI Study 앱 (macOS, zip)", path: "files/ai-study.zip" },
+    ],
     links: [],
   },
   {
-    id: "sample-app",
-    icon: "🎵",
-    title: "예시: 음악 플레이어",
-    category: "app",
-    date: "2026-11-20",
-    summary: "좋아하는 노래를 모아 듣는 웹 음악 플레이어입니다.",
-    description: "앱 소개, 사용한 기술, 만든 이유 등을 자유롭게 적으면 됩니다.",
-    tags: ["예시", "웹앱"],
-    thumbnail: "",
+    id: "must-physical",
+    icon: "🏃",
+    title: "Must Physical 레슨장 홈페이지",
+    category: "web",
+    date: "2026-11-18",
+    summary: "육상 기반 스피드·기초체력 트레이닝 레슨장의 소개, 프로그램, 가격, 상담 문의 홈페이지입니다.",
+    description:
+      "오픈을 준비 중인 스포츠 트레이닝 레슨장 \"Must Physical\"(가칭)의 홈페이지입니다. 슬로건은 \"스피드는 선택이 아니라 필수\"입니다.\n\n" +
+      "■ 구성\n" +
+      "· 대상별 안내: 엘리트 선수, 초3~중학생 기초체력, 성인·시니어 체력교실\n" +
+      "· 프로그램과 가격, 코치 소개, 자주 묻는 질문, 오시는 길\n" +
+      "· 무료 체험 수업 신청과 상담 문의\n\n" +
+      "■ 특징\n" +
+      "· 파일 하나로 된 반응형 페이지 (PC, 태블릿, 휴대폰 모두 대응)\n" +
+      "· 휴대폰에서는 햄버거 메뉴와 하단 고정 [전화 상담][카카오톡 문의] 바\n\n" +
+      "※ 제작 중인 시안입니다. 전화번호, 센터 주소 등 아직 정해지지 않은 정보는 [대괄호]로 비워 두었습니다.",
+    tags: ["홈페이지", "HTML", "CSS", "반응형", "스포츠"],
+    thumbnail: "images/lesson-homepage.jpg",
     files: [],
     links: [
-      { label: "앱 열어보기", url: "https://example.com" },
+      { label: "홈페이지 열어보기", url: "lesson/" },
     ],
-  },
-  {
-    id: "sample-budget",
-    icon: "💰",
-    title: "예시: 가계부 앱",
-    category: "app",
-    date: "2026-11-10",
-    summary: "지출을 기록하고 한 달 소비를 그래프로 보여주는 앱입니다.",
-    description: "앱 예시입니다.",
-    tags: ["예시", "웹앱"],
-    thumbnail: "",
-    files: [],
-    links: [
-      { label: "앱 열어보기", url: "https://example.com" },
-    ],
-  },
-  {
-    id: "sample-usage",
-    icon: "⏱️",
-    title: "예시: 사용량 표시 막대",
-    category: "app",
-    date: "2026-11-05",
-    summary: "메뉴바에서 사용량을 한눈에 확인하는 작은 도구입니다.",
-    description: "앱 예시입니다.",
-    tags: ["예시", "도구"],
-    thumbnail: "",
-    files: [],
-    links: [],
-  },
-  {
-    id: "sample-youtube",
-    icon: "🎬",
-    title: "예시: 유튜브 기획 노트",
-    category: "etc",
-    date: "2026-11-01",
-    summary: "영상 아이디어와 대본 초안을 모아 둔 노트입니다.",
-    description: "기타 작업물 예시입니다.",
-    tags: ["예시", "유튜브"],
-    thumbnail: "",
-    files: [],
-    links: [],
   },
 ];
