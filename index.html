@@ -8,7 +8,7 @@
   <title>포트폴리오</title>
   <meta name="description" content="직접 만든 앱과 공부 자료를 모아 공유하는 포트폴리오">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20261123">
 </head>
 <body>
   <header class="site-header">
@@ -43,8 +43,20 @@
     </div>
   </dialog>
 
-  <!-- 데이터 파일을 먼저 불러온 뒤 화면을 그린다 -->
-  <script src="data/works.js"></script>
-  <script src="assets/js/main.js"></script>
+  <!-- 데이터 파일을 먼저 불러온 뒤 화면을 그린다.
+       주소 뒤에 ?v=시각을 붙여 브라우저가 예전 파일(캐시)을 쓰지 않고 항상 새로 받게 한다. -->
+  <script>
+    (function () {
+      var v = Date.now();
+      var data = document.createElement("script");
+      data.src = "data/works.js?v=" + v;
+      data.onload = data.onerror = function () {
+        var app = document.createElement("script");
+        app.src = "assets/js/main.js?v=" + v;
+        document.body.appendChild(app);
+      };
+      document.body.appendChild(data);
+    })();
+  </script>
 </body>
 </html>
