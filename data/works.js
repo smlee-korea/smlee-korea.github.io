@@ -30,6 +30,35 @@ window.CATEGORIES = {
  */
 window.WORKS = [
   {
+    id: "detailpage-kit",
+    icon: "🛍️",
+    title: "상세페이지 자동 제작 키트 (Claude Code 스킬)",
+    category: "app",
+    date: "2026-11-24",
+    summary: "제품 사진 한 장을 주면 Claude Code가 쇼핑몰 상세페이지 JPG, 썸네일, 쿠팡 등록용 정리까지 만들어 주는 스킬입니다.",
+    description:
+      "스토어에 상품을 올릴 때마다 상세페이지를 직접 디자인하는 수고를 줄이려고 만든 Claude Code 스킬(/detailpage)입니다.\n\n" +
+      "■ 하는 일\n" +
+      "· 제품 사진이나 공급처 링크를 받아 제품 종류, 옵션, 구성을 파악\n" +
+      "· 쿠팡 판매량 상위 상품을 벤치마킹해 가격, 옵션, 강조점을 정리\n" +
+      "· 공식몰·제조사의 같은 제품 실제 사진을 찾아 넣고 출처를 기록\n" +
+      "· 깔끔한 모바일 쇼핑몰 스타일 상세페이지를 780px JPG로 렌더링하고 1000px 대표·추가 이미지 생성\n" +
+      "· 쿠팡 등록값(상품명, 옵션, 태그, 카테고리, 가격)과 올리기 전 확인할 점을 README로 정리\n\n" +
+      "■ 만든 방법\n" +
+      "Claude Code 스킬(SKILL.md) + HTML 템플릿 + Python(Pillow) 스크립트로 구성했고, 헤드리스 Chrome으로 HTML을 JPG로 찍습니다. 벤치마킹과 사진 검색은 Claude in Chrome을 씁니다.\n\n" +
+      "■ 다운로드해서 쓰려면\n" +
+      "· Windows 또는 Mac, Claude Pro 이상 구독 (Claude Code + Claude in Chrome)\n" +
+      "· Python 3.10 이상, Google Chrome (Windows는 Git for Windows도 필요)\n" +
+      "· zip을 풀고 안에 있는 SETUP.md 순서대로 한 번만 설정하면, 그 폴더에서 claude 실행 후 /detailpage 사진경로 로 씁니다.\n" +
+      "· 캐릭터·브랜드 상품은 라이선스 증빙이 없으면 판매하지 마세요.",
+    tags: ["Claude Code", "스킬", "상세페이지", "쿠팡", "Python"],
+    thumbnail: "",
+    files: [
+      { label: "상세페이지 제작 키트 (Windows·Mac, zip)", path: "files/detailpage-kit.zip" },
+    ],
+    links: [],
+  },
+  {
     id: "claude-usage-bar",                   // 영문/숫자/하이픈. 공유 링크 주소(#claude-usage-bar)에 쓰인다
     icon: "✳️",
     title: "Claude 사용량 메뉴바",
