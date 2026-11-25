@@ -110,7 +110,7 @@
       </button>`;
   }
 
-  function renderGrid() {
+  function renderGrid(animate = true) {
     const list = WORKS.filter(matches);
     // "전체"이고 검색어가 없을 때는 카테고리별로 묶어서 보여준다
     const grouped = state.category === "all" && !state.query;
@@ -129,7 +129,74 @@
     }
     $("#empty").hidden = list.length > 0;
     $("#count").textContent = `작업물 ${list.length}개`;
+    // 카드가 하나씩 순서대로 날아 들어오게 (검색어 입력 중에는 깜빡이지 않도록 생략)
+    if (animate) {
+      document.querySelectorAll("#grid .item").forEach((el, i) => {
+        el.style.animationDelay = `${(loaded ? 0 : 0.8) + i * 0.08}s`;
+        el.classList.add("fly-in");
+      });
+      loaded = true;
+    }
   }
+
+  /* ---------- 애니메이션 효과 ---------- */
+  let loaded = false; // 첫 화면이 아닌 경우(카테고리 변경)엔 카드가 바로 날아오게
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // 상단 배경에 둥둥 떠다니는 이모지와 날아가는 로켓
+  function addHeaderFx() {
+    if (reduceMotion) return;
+    const header = $(".site-header");
+    const emojis = ["🌼", "✨", "🤖", "💡", "⭐", "🎈", "🌟", "💻"];
+    // 글자를 가리지 않도록 주로 오른쪽과 가장자리에 배치 (left %, top %)
+    const spots = [[62, 18], [78, 52], [90, 14], [70, 78], [94, 62], [84, 34], [4, 12], [52, 84]];
+    spots.forEach(([x, y], i) => {
+      const el = document.createElement("span");
+      el.className = "floaty";
+      el.setAttribute("aria-hidden", "true");
+      el.textContent = emojis[i % emojis.length];
+      el.style.left = x + "%";
+      el.style.top = y + "%";
+      el.style.fontSize = 22 + Math.round(Math.random() * 18) + "px";
+      el.style.setProperty("--dur", (4 + Math.random() * 4).toFixed(1) + "s");
+      el.style.setProperty("--delay", (0.3 + i * 0.12).toFixed(2) + "s");
+      el.style.setProperty("--alpha", (0.45 + Math.random() * 0.35).toFixed(2));
+      header.appendChild(el);
+    });
+    const rocket = document.createElement("span");
+    rocket.className = "rocket";
+    rocket.setAttribute("aria-hidden", "true");
+    rocket.textContent = "🚀";
+    rocket.addEventListener("animationend", () => rocket.remove());
+    header.appendChild(rocket);
+  }
+
+  // 화면을 누르면 반짝이가 사방으로 튀어나감
+  function sparkle(x, y) {
+    if (reduceMotion) return;
+    const pieces = ["✨", "⭐", "💖", "🌼", "💫"];
+    const count = 8;
+    for (let i = 0; i < count; i++) {
+      const el = document.createElement("span");
+      el.className = "spark";
+      el.setAttribute("aria-hidden", "true");
+      el.textContent = pieces[Math.floor(Math.random() * pieces.length)];
+      const angle = (Math.PI * 2 * i) / count + Math.random() * 0.5;
+      const dist = 40 + Math.random() * 40;
+      el.style.left = x + "px";
+      el.style.top = y + "px";
+      el.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+      el.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+      el.style.setProperty("--rot", Math.round(Math.random() * 360 - 180) + "deg");
+      el.addEventListener("animationend", () => el.remove());
+      // 상세 창은 맨 위 층에 떠 있어서, 열려 있을 땐 창 안에 붙여야 반짝이가 보인다
+      (dialog.open ? dialog : document.body).appendChild(el);
+    }
+  }
+  document.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    sparkle(e.clientX, e.clientY);
+  });
 
   /* ---------- 상세 보기 ---------- */
   const dialog = $("#detail");
@@ -221,7 +288,7 @@
 
   $("#search").addEventListener("input", (e) => {
     state.query = e.target.value.trim().toLowerCase();
-    renderGrid();
+    renderGrid(false);
   });
 
   $("#grid").addEventListener("click", (e) => {
@@ -238,6 +305,7 @@
   window.addEventListener("popstate", syncHash);
 
   renderHeader();
+  addHeaderFx();
   renderFilters();
   renderGrid();
   syncHash();

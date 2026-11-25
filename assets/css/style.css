@@ -28,7 +28,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  font-family: "Gowun Dodum", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   line-height: 1.6;
   word-break: keep-all;
   overflow-wrap: anywhere;
@@ -363,4 +363,125 @@ a { color: var(--accent-ink); }
 
 @media (prefers-reduced-motion: reduce) {
   .item { transition: none; }
+}
+
+/* 귀여운 폰트: 제목류는 Jua(주아체) — 굵기가 하나뿐이라 가짜 굵게 처리를 막기 위해 400으로 고정 */
+.site-header h1,
+.group-title,
+.item-title,
+.detail h2 {
+  font-family: "Jua", "Gowun Dodum", "Pretendard", sans-serif;
+  font-weight: 400;
+}
+
+/* ==========================================================
+   애니메이션
+   ========================================================== */
+
+/* 상단: 배경 위에 떠다니는 이모지와 날아가는 로켓을 올리기 위한 준비 */
+.site-header { position: relative; overflow: hidden; }
+.site-header .wrap { position: relative; z-index: 1; }
+
+/* 상단 글자들이 아래에서 차례로 올라오며 등장 */
+.site-header .hello,
+.site-header .intro,
+.site-header .site-links {
+  animation: fade-up .7s cubic-bezier(.2, .8, .2, 1) both;
+}
+.site-header .hello { animation-delay: .05s; }
+.site-header .intro { animation-delay: .45s; }
+.site-header .site-links { animation-delay: .6s; }
+/* 제목은 통통 튀면서 등장 */
+.site-header h1 { animation: pop-bounce .9s cubic-bezier(.3, 1.6, .5, 1) .2s both; }
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes pop-bounce {
+  0%   { opacity: 0; transform: translateY(30px) scale(.85); }
+  60%  { opacity: 1; transform: translateY(-6px) scale(1.04); }
+  100% { opacity: 1; transform: none; }
+}
+
+/* 배경에 둥둥 떠다니는 이모지 */
+.floaty {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0;
+  animation:
+    floaty-in .8s ease forwards,
+    floaty-bob var(--dur, 6s) ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s), var(--delay, 0s);
+}
+@keyframes floaty-in { to { opacity: var(--alpha, .55); } }
+@keyframes floaty-bob {
+  from { transform: translateY(0) rotate(-8deg); }
+  to   { transform: translateY(-18px) rotate(8deg); }
+}
+
+/* 상단을 가로질러 한 번 날아가는 로켓 */
+.rocket {
+  position: absolute;
+  z-index: 0;
+  left: 0;
+  bottom: 10%;
+  font-size: 40px;
+  pointer-events: none;
+  animation: rocket-fly 2.6s cubic-bezier(.45, .05, .55, .95) .9s both;
+}
+@keyframes rocket-fly {
+  0%   { opacity: 0; transform: translate(-80px, 40px) rotate(10deg); }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(100vw + 80px), -160px) rotate(10deg); }
+}
+
+/* 작업물 카드: 하나씩 순서대로 날아 들어옴 */
+.item.fly-in { animation: card-in .6s cubic-bezier(.2, .9, .3, 1.2) both; }
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(40px) scale(.94); }
+  to   { opacity: 1; transform: none; }
+}
+.group-title { animation: fade-up .5s ease both; }
+
+/* 카드에 마우스를 올리면 아이콘이 꼼지락 */
+.item:hover .icon { animation: wiggle .5s ease; }
+@keyframes wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-10deg) scale(1.06); }
+  50% { transform: rotate(8deg) scale(1.06); }
+  75% { transform: rotate(-4deg); }
+}
+
+/* 상세 창이 뿅 하고 열림 */
+.detail[open] { animation: dialog-pop .35s cubic-bezier(.2, 1.4, .4, 1) both; }
+.detail[open]::backdrop { animation: backdrop-in .3s ease both; }
+@keyframes dialog-pop {
+  from { opacity: 0; transform: translateY(20px) scale(.92); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes backdrop-in { from { opacity: 0; } }
+
+/* 클릭하면 튀어나가는 반짝이 */
+.spark {
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 18px;
+  animation: spark-fly .8s cubic-bezier(.15, .7, .3, 1) forwards;
+}
+@keyframes spark-fly {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(.6); }
+  to   { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.1) rotate(var(--rot)); }
+}
+
+/* 움직임 줄이기 설정을 켠 사용자에게는 애니메이션을 끈다 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after, .detail[open]::backdrop {
+    animation: none !important;
+  }
+  .floaty, .rocket, .spark { display: none; }
 }

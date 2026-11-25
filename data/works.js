@@ -6,8 +6,8 @@
 
 window.SITE = {
   hello: "👋 반가워요",                      // 제목 위 작은 인사말 (비우면 안 보임)
-  title: "포트폴리오",                       // 사이트 제목 (브라우저 탭과 상단에 표시)
-  intro: "직접 만든 앱과 공부한 내용을 정리해 공유하는 공간입니다.",
+  title: "성민's AI 도전기",                     // 사이트 제목 (브라우저 탭과 상단에 표시)
+  intro: "몽땅 유능한 것들로 가득 채워볼게유~",
   links: [
     { label: "🐙 GitHub", url: "https://github.com/smlee-korea" },
     // 예: { label: "✉️ 이메일", url: "mailto:주소" },
