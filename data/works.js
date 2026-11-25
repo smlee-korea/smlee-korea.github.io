@@ -30,6 +30,40 @@ window.CATEGORIES = {
  */
 window.WORKS = [
   {
+    id: "bank-ledger",
+    icon: "images/bank-ledger-icon.png",
+    title: "알림 가계부 자동화",
+    category: "app",
+    date: "2026-11-25",
+    summary: "은행 결제·이체 푸시 알림을 받아 Mac의 엑셀 가계부에 자동으로 적고, 소비 습관을 분석해 생활 규칙을 제안하는 도구입니다.",
+    description:
+      "카카오뱅크는 PC와 연동되지 않아서 거래 내역을 자동으로 가져올 방법이 없었습니다. 그래서 휴대폰에 오는 푸시 알림을 데이터로 삼아, 손으로 입력하지 않아도 가계부가 채워지게 만들었습니다.\n\n" +
+      "■ 작동 방식\n" +
+      "· 휴대폰(Android)의 MacroDroid가 은행 앱 알림만 골라 구글 Apps Script로 보냄\n" +
+      "· 구글 시트가 우편함 역할을 해서 Mac이 꺼져 있어도 알림이 쌓임\n" +
+      "· Mac이 30분마다 가져와 금액, 수입·지출, 거래처, 카테고리를 해석해 가계부.xlsx에 기록\n" +
+      "· 세이프박스 이동, 본인 계좌 간 이체, 중복 알림은 거르고 결제 취소는 자동으로 차감\n\n" +
+      "■ 대시보드 (7개 탭)\n" +
+      "· 요약, 지출 분석, 요일·시간대 소비 패턴, 거래 내역, 엑셀 시트 보기\n" +
+      "· 생활 규칙: 배달 횟수, 밤 결제, 소액 결제 같은 패턴을 찾아 근거와 함께 규칙 제안\n" +
+      "· 만원챌린지: 하루 1만 원으로 살기 도전의 성공 달력 (남은 돈은 다음 날로 이월)\n\n" +
+      "■ 만든 방법\n" +
+      "Python 표준 라이브러리 + openpyxl, Google Apps Script, launchd, AppleScript로 만들었고, 대시보드는 라이브러리 없이 HTML/JS로 직접 그렸습니다. 금융 데이터라서 분석은 모두 내 Mac 안(127.0.0.1)에서만 하고 외부 API를 쓰지 않습니다. macOS 보안 때문에 Python에 넓은 권한을 주는 대신, 데스크탑 폴더 권한만 받은 미니앱이 실행하도록 했습니다.\n\n" +
+      "■ 다운로드해서 쓰려면\n" +
+      "· Android 휴대폰, Mac, 구글 계정, Python 3 + openpyxl\n" +
+      "· zip 안의 README.md 순서대로 구글 시트, MacroDroid, Mac을 설정합니다.\n" +
+      "· 은행마다 알림 문구가 달라서 rules.json의 키워드를 내 은행에 맞게 고쳐야 할 수 있습니다.\n" +
+      "· 소개 페이지의 대시보드 데모는 모두 가짜 샘플 데이터입니다.",
+    tags: ["Python", "Apps Script", "자동화", "가계부", "macOS"],
+    thumbnail: "images/bank-ledger-shot.jpg",
+    files: [
+      { label: "알림 가계부 코드 (macOS·Android, zip)", path: "files/bank-ledger.zip" },
+    ],
+    links: [
+      { label: "작동 방식 소개 + 대시보드 데모", url: "bank-ledger/" },
+    ],
+  },
+  {
     id: "detailpage-kit",
     icon: "🛍️",
     title: "상세페이지 자동 제작 키트 (Claude Code 스킬)",
