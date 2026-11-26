@@ -104,6 +104,14 @@
     code { font-family: var(--mono); font-size: .86em; background: var(--sunk); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; }
     pre { margin: 2px 0; background: var(--code-bg); color: var(--code-ink); padding: 12px 14px; border-radius: 12px; overflow-x: auto; font: 13px/1.6 var(--mono); white-space: pre; }
     pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+    /* 명령어 블록: 제목 + 복사 버튼 */
+    .cmd { display: grid; gap: 4px; }
+    .cmd-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--muted); }
+    .cmd-copy { font: inherit; font-size: 12px; cursor: pointer; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--accent-ink); }
+    .cmd-copy:hover { background: var(--accent-soft); }
+    /* 내가 Claude에게 보낸 요청 (말풍선) */
+    .prompt { margin: 2px 0; padding: 12px 16px; border-radius: 16px 16px 16px 4px; background: var(--accent-soft); border: 1px solid #ffd3b3; font-size: 15px; }
+    .prompt b { display: block; font-size: 12.5px; color: var(--accent-ink); font-weight: 400; margin-bottom: 4px; }
     .caution { margin-top: 14px; font-size: 13.5px; color: var(--muted); background: var(--sunk); border-radius: 12px; padding: 10px 14px; }
     .actions { display: flex; justify-content: flex-end; margin-top: 12px; }
     .copy { font: inherit; font-size: 13px; cursor: pointer; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--accent-ink); }
@@ -166,7 +174,12 @@
         let html = "", list = [];
         const flush = () => { if (list.length) { html += "<ul>" + list.map((l) => `<li>${inline(l)}</li>`).join("") + "</ul>"; list = []; } };
         for (const it of items || []) {
-          if (typeof it === "object" && it.code != null) { flush(); html += `<pre><code>${esc(it.code)}</code></pre>`; }
+          if (typeof it === "object" && it.prompt != null) {
+            flush(); html += `<div class="prompt"><b>💬 ${esc(it.label || "내가 보낸 요청")}</b>${inline(it.prompt)}</div>`;
+          } else if (typeof it === "object" && it.code != null) {
+            flush();
+            html += `<div class="cmd"><div class="cmd-head"><span>${it.label ? inline(it.label) : ""}</span><button type="button" class="cmd-copy">복사</button></div><pre><code>${esc(it.code)}</code></pre></div>`;
+          }
           else if (/^·\s*/.test(it)) list.push(it.replace(/^·\s*/, ""));
           else { flush(); html += `<p>${inline(it)}</p>`; }
         }
@@ -224,6 +237,13 @@
       });
       $("#search").addEventListener("input", (e) => { state.query = e.target.value; render(); });
       $("#list").addEventListener("click", async (e) => {
+        const cb = e.target.closest(".cmd-copy");
+        if (cb) {
+          const code = cb.closest(".cmd").querySelector("code").textContent;
+          try { await navigator.clipboard.writeText(code); cb.textContent = "✅ 복사됨"; } catch { cb.textContent = "복사 실패"; }
+          setTimeout(() => { cb.textContent = "복사"; }, 1800);
+          return;
+        }
         const b = e.target.closest(".copy"); if (!b) return;
         const url = location.href.split("#")[0] + "#" + b.dataset.id;
         try { await navigator.clipboard.writeText(url); b.textContent = "✅ 복사했어요"; }
