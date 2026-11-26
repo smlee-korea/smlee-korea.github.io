@@ -28,11 +28,8 @@
       --shadow: 0 1px 2px rgba(120, 70, 30, .05), 0 6px 20px rgba(120, 70, 30, .07);
       --radius: 18px;
       /* 단계별 표시 색 */
-      --s-symptom: #d9483b;
-      --s-work: #a08a7a;
       --s-cause: #e0692c;
       --s-fix: #2f8f5b;
-      --s-verify: #2f73b8;
       --s-again: #8a5cc2;
       --s-lesson: #c99a12;
       --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
@@ -138,7 +135,7 @@
   <main class="wrap">
     <div class="toolbar">
       <div class="filters" id="filters" aria-label="프로젝트별 보기"></div>
-      <input class="search" id="search" type="search" placeholder="제목, 태그, 오류 문구로 검색" aria-label="검색">
+      <input class="search" id="search" type="search" placeholder="제목, 태그로 검색" aria-label="검색">
     </div>
     <p class="count" id="count"></p>
     <div class="list" id="list"></div>
@@ -151,11 +148,8 @@
     (() => {
       const NOTES = (window.NOTES || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
       const STEPS = [
-        ["symptom", "증상", "--s-symptom"],
-        ["workaround", "임시 방편", "--s-work"],
         ["cause", "원인", "--s-cause"],
         ["fix", "해결", "--s-fix"],
-        ["verify", "확인", "--s-verify"],
         ["again", "다시 막히면", "--s-again"],
         ["lesson", "배운 점", "--s-lesson"],
       ];
