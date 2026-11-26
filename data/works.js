@@ -30,6 +30,31 @@ window.CATEGORIES = {
  */
 window.WORKS = [
   {
+    id: "notes",
+    icon: "📝",
+    title: "오답노트",
+    category: "study",
+    date: "2026-11-26",
+    summary: "작업하다 막혔던 문제와 그 원인, 해결 과정을 한곳에 모아 둔 노트입니다.",
+    description:
+      "AI와 함께 이것저것 만들다 보면 같은 곳에서 두 번 막히는 일이 생깁니다. 그래서 막혔던 문제를 풀 때마다 같은 틀로 정리해 두기로 했습니다.\n\n" +
+      "■ 노트 한 장의 구성\n" +
+      "· 증상: 실제로 나온 오류 문구\n" +
+      "· 원인: 왜 막혔는지\n" +
+      "· 해결: 실제로 한 조치와 명령어\n" +
+      "· 확인: 어떻게 테스트해서 해결을 확인했는지\n" +
+      "· 다시 막히면: 재발했을 때 먼저 할 일\n" +
+      "· 배운 점\n\n" +
+      "■ 첫 노트\n" +
+      "· YouTube 레퍼런스 영상을 받으려는데 yt-dlp가 계속 실패함 (Youtube 쇼츠 시스템)",
+    tags: ["오답노트", "문제 해결", "기록"],
+    thumbnail: "",
+    files: [],
+    links: [
+      { label: "오답노트 모아 보기", url: "notes/" },
+    ],
+  },
+  {
     id: "bank-ledger",
     icon: "images/bank-ledger-icon.png",
     title: "알림 가계부 자동화",

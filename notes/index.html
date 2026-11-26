@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff1e2">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📝</text></svg>">
+  <title>오답노트 · 성민's AI 도전기</title>
+  <meta name="description" content="작업하다 막혔던 문제와 해결 과정을 모아 둔 오답노트">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <style>
+    /* 메인 사이트(assets/css/style.css)와 같은 크림·주황 톤. 노트 한 장 = 문제 하나, 단계별 색 표시로 흐름을 읽게 한다 */
+    :root {
+      --bg: #fff8ef;
+      --surface: #ffffff;
+      --sunk: #fdf1e4;
+      --text: #3d2b1f;
+      --muted: #8b7262;
+      --line: #f1e1cf;
+      --accent: #e0692c;
+      --accent-ink: #b8501c;
+      --accent-soft: #ffe9d9;
+      --code-bg: #2f241d;
+      --code-ink: #fbeee2;
+      --shadow: 0 1px 2px rgba(120, 70, 30, .05), 0 6px 20px rgba(120, 70, 30, .07);
+      --radius: 18px;
+      /* 단계별 표시 색 */
+      --s-symptom: #d9483b;
+      --s-work: #a08a7a;
+      --s-cause: #e0692c;
+      --s-fix: #2f8f5b;
+      --s-verify: #2f73b8;
+      --s-again: #8a5cc2;
+      --s-lesson: #c99a12;
+      --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      color-scheme: light;
+    }
+    * { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: var(--bg); color: var(--text);
+      font-family: "Gowun Dodum", "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      line-height: 1.7; word-break: keep-all; overflow-wrap: anywhere;
+    }
+    a { color: var(--accent-ink); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+    .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px; }
+
+    /* 머리 */
+    header {
+      padding: 28px 0 32px;
+      background:
+        radial-gradient(600px 260px at 12% 0%, #ffd9b8 0%, transparent 70%),
+        radial-gradient(520px 240px at 88% 10%, #ffe7a8 0%, transparent 70%),
+        linear-gradient(180deg, #fff1e2 0%, var(--bg) 100%);
+    }
+    .back { display: inline-flex; gap: 6px; align-items: center; font-size: 14px; text-decoration: none; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.7); border: 1px solid var(--line); }
+    .back:hover { background: var(--surface); }
+    h1 { font-family: "Jua", "Pretendard", sans-serif; font-weight: 400; font-size: clamp(32px, 6vw, 46px); margin: 28px 0 8px; letter-spacing: -0.01em; }
+    .intro { margin: 0; color: var(--muted); font-size: 16px; max-width: 60ch; }
+    .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 18px; font-size: 13px; color: var(--muted); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .legend i { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+    /* 도구줄 */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 8px 0 20px; }
+    .filters { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+    .filters button {
+      font: inherit; font-size: 14px; padding: 7px 14px; border-radius: 999px; cursor: pointer;
+      border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    }
+    .filters button { white-space: nowrap; }
+    .filters button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .filters button small { opacity: .75; margin-left: 4px; }
+    .search { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--text); min-width: 200px; }
+    .count { font-size: 13px; color: var(--muted); margin: 0 0 12px; }
+
+    /* 노트 카드 */
+    .list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; padding-bottom: 72px; }
+    .note { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; scroll-margin-top: 16px; }
+    .note > summary { list-style: none; cursor: pointer; padding: 20px 22px; display: grid; gap: 8px; }
+    .note > summary::-webkit-details-marker { display: none; }
+    .meta { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; font-size: 13px; color: var(--muted); }
+    .meta .proj { background: var(--accent-soft); color: var(--accent-ink); padding: 2px 10px; border-radius: 999px; }
+    .note h2 { margin: 0; font-family: "Jua", "Pretendard", sans-serif; font-weight: 400; font-size: clamp(20px, 3.4vw, 24px); line-height: 1.35; }
+    .oneline { margin: 0; color: var(--muted); font-size: 15px; }
+    .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: space-between; }
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag { font-size: 12px; padding: 3px 9px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+    .toggle { font-size: 13px; color: var(--accent-ink); }
+    .toggle::after { content: "펼치기 ▾"; }
+    .note[open] .toggle::after { content: "접기 ▴"; }
+
+    .body { border-top: 1px dashed var(--line); padding: 8px 22px 22px; }
+    .step { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 14px; padding: 16px 0; border-bottom: 1px solid var(--line); }
+    .step:last-of-type { border-bottom: 0; }
+    .label { display: flex; align-items: flex-start; gap: 8px; font-family: "Jua", "Pretendard", sans-serif; font-size: 16px; padding-top: 1px; }
+    .label i { flex: none; width: 10px; height: 10px; border-radius: 50%; margin-top: 8px; background: var(--c); }
+    .content { display: grid; gap: 8px; font-size: 15.5px; min-width: 0; }
+    .content p { margin: 0; }
+    .content ul { margin: 0; padding-left: 1.1em; display: grid; gap: 6px; }
+    .content li::marker { color: var(--c); }
+    .content strong { color: var(--text); background: linear-gradient(transparent 62%, var(--accent-soft) 62%); }
+    code { font-family: var(--mono); font-size: .86em; background: var(--sunk); border: 1px solid var(--line); padding: 1px 6px; border-radius: 6px; }
+    pre { margin: 2px 0; background: var(--code-bg); color: var(--code-ink); padding: 12px 14px; border-radius: 12px; overflow-x: auto; font: 13px/1.6 var(--mono); white-space: pre; }
+    pre code { background: none; border: 0; padding: 0; font-size: inherit; color: inherit; }
+    .caution { margin-top: 14px; font-size: 13.5px; color: var(--muted); background: var(--sunk); border-radius: 12px; padding: 10px 14px; }
+    .actions { display: flex; justify-content: flex-end; margin-top: 12px; }
+    .copy { font: inherit; font-size: 13px; cursor: pointer; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--accent-ink); }
+    .copy:hover { background: var(--accent-soft); }
+    .empty { text-align: center; color: var(--muted); padding: 40px 0; }
+    footer { text-align: center; font-size: 13px; color: var(--muted); padding: 0 0 40px; }
+
+    @media (max-width: 600px) {
+      .step { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+      .filters { flex-basis: 100%; }
+      .search { flex: 1 1 100%; min-width: 0; }
+      .note > summary, .body { padding-left: 16px; padding-right: 16px; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .note { transition: box-shadow .2s; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <a class="back" href="../">← 포트폴리오로</a>
+      <h1>📝 오답노트</h1>
+      <p class="intro">작업하다 막혔던 문제를 어떻게 풀었는지 모아 둔 곳입니다. 같은 데서 두 번 막히지 않으려고 적습니다.</p>
+      <div class="legend" id="legend"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="toolbar">
+      <div class="filters" id="filters" aria-label="프로젝트별 보기"></div>
+      <input class="search" id="search" type="search" placeholder="제목, 태그, 오류 문구로 검색" aria-label="검색">
+    </div>
+    <p class="count" id="count"></p>
+    <div class="list" id="list"></div>
+  </main>
+  <footer>© 2026 성민's AI 도전기</footer>
+
+  <!-- 노트를 추가해도 예전 파일(캐시)이 보이지 않게 열 때마다 새로 받는다 -->
+  <script>document.write('<script src="../data/notes.js?v=' + Date.now() + '"><\/script>');</script>
+  <script>
+    (() => {
+      const NOTES = (window.NOTES || []).slice().sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+      const STEPS = [
+        ["symptom", "증상", "--s-symptom"],
+        ["workaround", "임시 방편", "--s-work"],
+        ["cause", "원인", "--s-cause"],
+        ["fix", "해결", "--s-fix"],
+        ["verify", "확인", "--s-verify"],
+        ["again", "다시 막히면", "--s-again"],
+        ["lesson", "배운 점", "--s-lesson"],
+      ];
+      const state = { project: "all", query: "" };
+      const $ = (s) => document.querySelector(s);
+      const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+      // 한 줄 안의 `코드`와 **굵게** 처리 (이스케이프 후 변환)
+      const inline = (s) => esc(s)
+        .replace(/`([^`]+)`/g, "<code>$1</code>")
+        .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+
+      // 문단 / "· 목록" / { code } 블록을 순서대로 그린다. 연속된 목록 줄은 하나의 ul로 묶는다
+      function block(items) {
+        let html = "", list = [];
+        const flush = () => { if (list.length) { html += "<ul>" + list.map((l) => `<li>${inline(l)}</li>`).join("") + "</ul>"; list = []; } };
+        for (const it of items || []) {
+          if (typeof it === "object" && it.code != null) { flush(); html += `<pre><code>${esc(it.code)}</code></pre>`; }
+          else if (/^·\s*/.test(it)) list.push(it.replace(/^·\s*/, ""));
+          else { flush(); html += `<p>${inline(it)}</p>`; }
+        }
+        flush();
+        return html;
+      }
+
+      const textOf = (n) => JSON.stringify(n).toLowerCase();
+
+      function renderLegend() {
+        $("#legend").innerHTML = STEPS.map(([, name, c]) => `<span><i style="background:var(${c})"></i>${name}</span>`).join("");
+      }
+
+      function renderFilters() {
+        const projects = [...new Set(NOTES.map((n) => n.project || "기타"))];
+        const btns = [["all", "전체", NOTES.length], ...projects.map((p) => [p, p, NOTES.filter((n) => (n.project || "기타") === p).length])];
+        $("#filters").innerHTML = btns.map(([k, label, cnt]) =>
+          `<button type="button" data-p="${esc(k)}" aria-pressed="${state.project === k}">${esc(label)}<small>${cnt}</small></button>`).join("");
+      }
+
+      function render() {
+        const q = state.query.trim().toLowerCase();
+        const list = NOTES.filter((n) =>
+          (state.project === "all" || (n.project || "기타") === state.project) && (!q || textOf(n).includes(q)));
+        $("#count").textContent = `노트 ${list.length}개`;
+        if (!list.length) { $("#list").innerHTML = `<p class="empty">조건에 맞는 노트가 없습니다.</p>`; return; }
+        const hash = decodeURIComponent(location.hash.slice(1));
+        const openAll = list.length === 1;
+        $("#list").innerHTML = list.map((n) => `
+          <details class="note" id="${esc(n.id)}" ${openAll || hash === n.id ? "open" : ""}>
+            <summary>
+              <div class="meta"><span class="proj">${esc(n.project || "기타")}</span><time datetime="${esc(n.date)}">${esc(n.date)}</time></div>
+              <h2>${inline(n.title)}</h2>
+              ${n.oneline ? `<p class="oneline">${inline(n.oneline)}</p>` : ""}
+              <div class="row">
+                <div class="tags">${(n.tags || []).map((t) => `<span class="tag">#${esc(t)}</span>`).join("")}</div>
+                <span class="toggle" aria-hidden="true"></span>
+              </div>
+            </summary>
+            <div class="body">
+              ${STEPS.filter(([k]) => n[k] && n[k].length).map(([k, name, c]) => `
+                <section class="step" style="--c:var(${c})">
+                  <div class="label"><i></i>${name}</div>
+                  <div class="content">${block(n[k])}</div>
+                </section>`).join("")}
+              ${n.note ? `<p class="caution">※ ${inline(n.note)}</p>` : ""}
+              <div class="actions"><button type="button" class="copy" data-id="${esc(n.id)}">🔗 이 노트 링크 복사</button></div>
+            </div>
+          </details>`).join("");
+      }
+
+      $("#filters").addEventListener("click", (e) => {
+        const b = e.target.closest("button"); if (!b) return;
+        state.project = b.dataset.p; renderFilters(); render();
+      });
+      $("#search").addEventListener("input", (e) => { state.query = e.target.value; render(); });
+      $("#list").addEventListener("click", async (e) => {
+        const b = e.target.closest(".copy"); if (!b) return;
+        const url = location.href.split("#")[0] + "#" + b.dataset.id;
+        try { await navigator.clipboard.writeText(url); b.textContent = "✅ 복사했어요"; }
+        catch { b.textContent = url; }
+        setTimeout(() => { b.textContent = "🔗 이 노트 링크 복사"; }, 2000);
+      });
+
+      renderLegend(); renderFilters(); render();
+      const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      if (target) target.scrollIntoView();
+    })();
+  </script>
+</body>
+</html>
